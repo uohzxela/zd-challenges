@@ -5,7 +5,11 @@ def prompt():
 
 def input_board_size():
     print "Enter board size:"
-    return int(prompt())
+    try:
+        return int(prompt())
+    except ValueError:
+        print "Invalid input, defaulting to board size of 3."
+        return 3
 
 
 def input_p1_name():
@@ -40,13 +44,19 @@ def make_move(B, player_data):
     name, marker = player_data
     print "{}, choose a box to place '{}' into:".format(name, marker)
     while True:
-        box_idx = int(prompt())-1
+        try:
+            box_idx = int(prompt())-1
+        except ValueError:
+            print ("Oops {}, your input is invalid, please try again:"
+                   .format(name))
+            continue
         i, j = box_idx / len(B), box_idx % len(B)
         if B[i][j].isdigit():
             B[i][j] = marker
             break
         else:
-            print "Sorry, this box is already filled, please try again:"
+            print ("Sorry {}, this box is already filled, please try again:"
+                   .format(name))
     return (i, j)
 
 
@@ -78,7 +88,8 @@ def is_winnable(B, move):
     i, j = move
     return (is_winnable_horizontally(B, i, j) or
             is_winnable_vertically(B, i, j) or
-            is_winnable_diagonally(B, i, j))
+            is_winnable_diagonally(B, i, j) or
+            is_winnable_anti_diagonally(B, i, j))
 
 
 def is_winnable_horizontally(B, i, j):
@@ -125,7 +136,7 @@ def is_winnable_vertically(B, i, j):
 def is_winnable_diagonally(B, i, j):
     marker = B[i][j]
     N = len(B)
-    # case 1a:
+    # case 1:
     # val
     #    val
     #       x
@@ -134,7 +145,7 @@ def is_winnable_diagonally(B, i, j):
             B[i-1][j-1] == marker and
             B[i-2][j-2] == marker):
         return True
-    # case 2a:
+    # case 2:
     # x
     #  val
     #     val
@@ -143,7 +154,7 @@ def is_winnable_diagonally(B, i, j):
             B[i+1][j+1] == marker and
             B[i+2][j+2] == marker):
         return True
-    # case 3b:
+    # case 3:
     # val
     #    x
     #     val
@@ -152,7 +163,12 @@ def is_winnable_diagonally(B, i, j):
             B[i-1][j-1] == marker and
             B[i+1][j+1] == marker):
         return True
-    # case 1b:
+
+
+def is_winnable_anti_diagonally(B, i, j):
+    marker = B[i][j]
+    N = len(B)
+    # case 1:
     #       x
     #    val
     # val
@@ -161,7 +177,7 @@ def is_winnable_diagonally(B, i, j):
             B[i+1][j-1] == marker and
             B[i+2][j-2] == marker):
         return True
-    # case 2b:
+    # case 2:
     #     val
     #  val
     # x
@@ -170,7 +186,7 @@ def is_winnable_diagonally(B, i, j):
             B[i-1][j+1] == marker and
             B[i-2][j+2] == marker):
         return True
-    # case 3b:
+    # case 3:
     #     val
     #    x
     # val
@@ -184,20 +200,18 @@ def is_winnable_diagonally(B, i, j):
 
 if __name__ == "__main__":
     PLAYERS, B = get_players_and_board()
+    TOTAL_BOX_COUNT = len(B)**2
 
-    N = len(B)**2
     move_count = 0
     prev_move = None
 
     while True:
         print_board(B)
-
         if prev_move and is_winnable(B, prev_move):
             output_winner(PLAYERS[(move_count-1) % 2])
             break
-        if move_count == N:
+        if move_count == TOTAL_BOX_COUNT:
             output_board_is_full()
             break
-
         prev_move = make_move(B, PLAYERS[move_count % 2])
         move_count += 1
