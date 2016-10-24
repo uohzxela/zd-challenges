@@ -1,106 +1,203 @@
 def prompt():
-	print ">>",
-	return raw_input()
+    print ">>",
+    return raw_input()
 
 
 def input_board_size():
-	print "Enter board size:"
-	return int(prompt())
+    print "Enter board size:"
+    return int(prompt())
 
 
 def input_p1_name():
-	print "Enter name for Player 1:"
-	return prompt()
+    print "Enter name for Player 1:"
+    return prompt()
 
 
 def input_p2_name():
-	print "Enter name for Player 2:"
-	return prompt()
+    print "Enter name for Player 2:"
+    return prompt()
 
 
-def get_position(B, box_idx):
-	return box_idx / len(B), box_idx % len(B)
+def get_players_and_board():
+    B = generate_board(input_board_size())
+    P1_MARKER = 'x'
+    P2_MARKER = 'o'
+    PLAYERS = [(input_p1_name(), P1_MARKER),
+               (input_p2_name(), P2_MARKER)]
+    return PLAYERS, B
 
 
-def place_marker(B, box_idx, marker):
-	i, j = get_position(B, box_idx)
-	B[i][j] = marker
+def output_board_is_full():
+    print "No one wins. Board is full."
 
 
-def make_move(player_idx):
-	name = PLAYERS[player_idx]
-	marker = MARKERS[player_idx]
-	print "{}, choose a box to place '{}' into:".format(name, marker)
-	box_idx = prompt()
-	place_marker(B, box_idx, marker)
+def output_winner(player_data):
+    name, _ = player_data
+    print "Congratulations {}! You have won.".format(name)
+
+
+def make_move(B, player_data):
+    name, marker = player_data
+    print "{}, choose a box to place '{}' into:".format(name, marker)
+    while True:
+        box_idx = int(prompt())-1
+        i, j = box_idx / len(B), box_idx % len(B)
+        if B[i][j].isdigit():
+            B[i][j] = marker
+            break
+        else:
+            print "Sorry, this box is already filled, please try again:"
+    return (i, j)
 
 
 def generate_board(N):
-	B = [[0 for j in xrange(N)] for i in xrange(N)]
-	num = 1
-	for i in xrange(N):
-		for j in xrange(N):
-			B[i][j] = num 
-			num += 1
-	return B
+    return [[str(N*i+j+1) for j in xrange(N)] for i in xrange(N)]
 
 
 def print_board(B):
-	max_box_padding = len(str(len(B)**2))
-	M, N = len(B), len(B[0])
-	for i in xrange(M):
-		row_len = 0
-		print "",
-		for j in xrange(N):
-			val = B[i][j]
-			padding = max_box_padding - len(str(val))
-			has_delineation = j < N - 1
-			box = "{}{} {}".format(
-				val, 
-				" "*(padding), 
-				"|" if has_delineation else "")
-			print box,
-			row_len += len(box) + 1
-		print
-		if i < M - 1:
-			print "-"*(row_len)
+    N = len(B)
+    max_box_padding = len(str(N**2))
+    print
+    for i in xrange(N):
+        row_len = 0
+        print "",
+        for j in xrange(N):
+            val = B[i][j]
+            padding = " "*(max_box_padding - len(str(val)))
+            delineation = "|" if j < N-1 else ""
+            box = "{}{} {}".format(val, padding, delineation)
+            print box,
+            row_len += len(box)+1
+        print
+        if i < N-1:
+            print "-"*(row_len)
+    print
 
 
-def is_board_full(moves):
-	return moves >= N**2
+def is_winnable(B, move):
+    i, j = move
+    return (is_winnable_horizontally(B, i, j) or
+            is_winnable_vertically(B, i, j) or
+            is_winnable_diagonally(B, i, j))
 
 
-def check_for_winning_move(B):
-	pass
+def is_winnable_horizontally(B, i, j):
+    marker = B[i][j]
+    N = len(B)
+    # case 1: val | val | x
+    if (j-1 >= 0 and j-2 >= 0 and
+            B[i][j-1] == marker and
+            B[i][j-2] == marker):
+        return True
+    # case 2: val | x | val
+    if (j-1 >= 0 and j+1 < N and
+            B[i][j-1] == marker and
+            B[i][j+1] == marker):
+        return True
+    # case 3: x | val | val
+    if (j+1 < N and j+2 < N and
+            B[i][j+1] == marker and
+            B[i][j+2] == marker):
+        return True
+    return False
 
 
-N = input_board_size()
-P1_NAME = input_p1_name()
-P2_NAME = input_p2_name()
+def is_winnable_vertically(B, i, j):
+    marker = B[i][j]
+    N = len(B)
+    # same cases as horizontal direction
+    # but this time in vertical direction
+    if (i-1 >= 0 and i-2 >= 0 and
+            B[i-1][j] == marker and
+            B[i-2][j] == marker):
+        return True
+    if (i-1 >= 0 and i+1 < N and
+            B[i-1][j] == marker and
+            B[i+1][j] == marker):
+        return True
+    if (i+1 < N and i+2 < N and
+            B[i+1][j] == marker and
+            B[i+2][j] == marker):
+        return True
+    return False
 
-print 'N:', N
-print 'Player 1:', P1_NAME
-print 'Player 2:', P2_NAME
 
-P1_MARKER = 'X'
-P2_MARKER = 'O'
+def is_winnable_diagonally(B, i, j):
+    marker = B[i][j]
+    N = len(B)
+    # case 1a:
+    # val
+    #    val
+    #       x
+    if (i-1 >= 0 and j-1 >= 0 and
+            i-2 >= 0 and j-2 >= 0 and
+            B[i-1][j-1] == marker and
+            B[i-2][j-2] == marker):
+        return True
+    # case 2a:
+    # x
+    #  val
+    #     val
+    if (i+1 < N and j+1 < N and
+            i+2 < N and j+2 < N and
+            B[i+1][j+1] == marker and
+            B[i+2][j+2] == marker):
+        return True
+    # case 3b:
+    # val
+    #    x
+    #     val
+    if (i-1 >= 0 and j-1 >= 0 and
+            i+1 < N and j+1 < N and
+            B[i-1][j-1] == marker and
+            B[i+1][j+1] == marker):
+        return True
+    # case 1b:
+    #       x
+    #    val
+    # val
+    if (i+1 < N and j-1 >= 0 and
+            i+2 < N and j-2 >= 0 and
+            B[i+1][j-1] == marker and
+            B[i+2][j-2] == marker):
+        return True
+    # case 2b:
+    #     val
+    #  val
+    # x
+    if (i-1 >= 0 and j+1 < N and
+            i-2 >= 0 and j+2 < N and
+            B[i-1][j+1] == marker and
+            B[i-2][j+2] == marker):
+        return True
+    # case 3b:
+    #     val
+    #    x
+    # val
+    if (i-1 >= 0 and j+1 < N and
+            i+1 < N and j-1 >= 0 and
+            B[i-1][j+1] == marker and
+            B[i+1][j-1] == marker):
+        return True
+    return False
 
-PLAYERS = [P1_NAME, P2_NAME]
-MARKERS = [P1_MARKER, P2_MARKER]
 
-B = generate_board(N)
-print_board(B)
-moves = 0
+if __name__ == "__main__":
+    PLAYERS, B = get_players_and_board()
 
-while False:
-	is_winnable, winner = check_for_winning_move(B)
-	if is_winnable:
-		output_winner(winner)
-		break
-	if is_board_full(moves):
-		output_board_is_full()
-		break
-	print_board(B)
-	make_move(moves % 2)
-	moves += 1
-	print_board(B)
+    N = len(B)**2
+    move_count = 0
+    prev_move = None
+
+    while True:
+        print_board(B)
+
+        if prev_move and is_winnable(B, prev_move):
+            output_winner(PLAYERS[(move_count-1) % 2])
+            break
+        if move_count == N:
+            output_board_is_full()
+            break
+
+        prev_move = make_move(B, PLAYERS[move_count % 2])
+        move_count += 1
