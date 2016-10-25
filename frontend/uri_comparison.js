@@ -16,7 +16,7 @@ function parseAuth(remaining) {
 		return [auth, remaining];
 	}
 	var idx = remaining.indexOf("@");
-	if (idx > -1) {
+	if (idx !== -1) {
 		auth = remaining.substr(0, idx);
 		remaining = remaining.substr(idx+1);
 	}
@@ -29,13 +29,13 @@ function parseHostAndPort(remaining) {
 		return [host, port, remaining];
 	}
 	var idx = remaining.indexOf("/");
-	if (idx < 0) {
+	if (idx === -1) {
 		idx = remaining.indexOf("?");
 	}
-	if (idx < 0) {
+	if (idx === -1) {
 		idx = remaining.indexOf("#");
 	}
-	if (idx > -1) {
+	if (idx !== -1) {
 		host = remaining.substr(0, idx);
 		remaining = remaining.substr(idx);
 	} else {
@@ -57,7 +57,7 @@ function parseFragment(remaining) {
 		return [fragment, remaining];
 	}
 	var idx = remaining.indexOf("#");
-	if (idx > -1) {
+	if (idx !== -1) {
 		fragment = remaining.substr(idx+1);
 		remaining = remaining.substr(0, idx);
 	}
@@ -86,7 +86,7 @@ function parseQuery(remaining) {
 		return [query, remaining];
 	}
 	var idx = remaining.indexOf("?");
-	if (idx > -1) {
+	if (idx !== -1) {
 		var queryStr = remaining.substr(idx+1);
 		remaining = remaining.substr(0, idx);
 		query = constructQueryMap(queryStr);
@@ -100,7 +100,7 @@ function parsePath(remaining) {
 		return path;
 	}
 	var idx = remaining.indexOf("/");
-	if (idx > -1) {
+	if (idx !== -1) {
 		var pathStr = remaining.substr(idx+1);
 		pathStr.split("/").forEach(function(directory) {
 			if (path.length > 0 && directory === "..") {
