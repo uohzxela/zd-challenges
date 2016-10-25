@@ -74,8 +74,8 @@ def print_board(B):
         for j in xrange(N):
             val = B[i][j]
             padding = " "*(max_box_padding - len(str(val)))
-            delineation = "|" if j < N-1 else ""
-            box = "{}{} {}".format(val, padding, delineation)
+            divider = "|" if j < N-1 else ""
+            box = "{}{} {}".format(val, padding, divider)
             print box,
             row_len += len(box)+1
         print
