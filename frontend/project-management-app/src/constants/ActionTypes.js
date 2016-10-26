@@ -1,0 +1,3 @@
+export const ADD_PROJECT = 'ADD_PROJECT';
+export const SORT_PROJECT = 'SORT_PROJECT';
+export const CLASSIFY_PROJECT = 'CLASSIFY_PROJECT';
