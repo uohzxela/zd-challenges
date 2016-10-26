@@ -227,7 +227,7 @@ console.assert(checkURIs('http://abc.com/foo.html?a=1&b=2&a=3', 'http://abc.com/
 
 // Test HEX encoding
 console.assert(checkURIs('http://abc.com:80/~smith/home.html', 'http://ABC.com/%7Esmith/home.html'));
-console.assert(checkURIs('http://www.abc.com/down/further/data?a=1&b=2#frag1', 
+console.assert(checkURIs('http://www.abc.com/down/further/data?a=1&b=2#frag1',
   'http%3A%2F%2Fwww.abc.com%2Fdown%2Ffurther%2Fdata%3Fa%3D1%26b%3D2%23frag1'));
 
 // Test empty fragment/query
