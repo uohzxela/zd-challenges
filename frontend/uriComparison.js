@@ -216,34 +216,34 @@ function checkURIs(uri1, uri2) {
   return true;
 }
 
-// test path
+// Test path
 console.assert(checkURIs('http://abc.com/drill/further/../down/./foo.html', 'http://abc.com/drill/down/foo.html'));
 console.assert(checkURIs('http://abc.com/drill/further/../../down/././foo.html', 'http://abc.com/down/foo.html'));
 
-// test query
+// Test query
 console.assert(checkURIs('http://abc.com/foo.html?a=1&b=2', 'http://abc.com/foo.html?b=2&a=1'));
 console.assert(!checkURIs('http://abc.com/foo.html?a=1&b=2&a=3', 'http://abc.com/foo.html?a=3&a=1&b=2'));
 console.assert(checkURIs('http://abc.com/foo.html?a=1&b=2&a=3', 'http://abc.com/foo.html?a=1&a=3&b=2'));
 
-// test HEX encoding
+// Test HEX encoding
 console.assert(checkURIs('http://abc.com:80/~smith/home.html', 'http://ABC.com/%7Esmith/home.html'));
 console.assert(checkURIs('http://www.abc.com/down/further/data?a=1&b=2#frag1', 
   'http%3A%2F%2Fwww.abc.com%2Fdown%2Ffurther%2Fdata%3Fa%3D1%26b%3D2%23frag1'));
 
-// test empty fragment/query
+// Test empty fragment/query
 console.assert(checkURIs('http://uname:passwd@host.com/foo/bar.html', 'http://uname:passwd@host.com/foo/bar.html#'));
 console.assert(checkURIs('http://uname:passwd@host.com/foo/bar.html', 'http://uname:passwd@host.com/foo/bar.html?'));
 console.assert(checkURIs('http://uname:passwd@host.com/', 'http://uname:passwd@host.com/?#'));
 
-// test non-empty fragment and empty query
+// Test non-empty fragment and empty query
 console.assert(checkURIs('http://uname:passwd@host.com#frag2', 'http://uname:passwd@host.com/?#frag2'));
 
-// test non-empty query and empty fragment
+// Test non-empty query and empty fragment
 console.assert(checkURIs('http://uname:passwd@host.com?a=1#', 'http://uname:passwd@host.com?a=1'));
 
-// test wrong auth
+// Test wrong auth
 console.assert(!checkURIs('http://uname:wrongpw@host.com', 'http://uname:passwd@host.com'));
 
-// test all features
+// Test all features
 console.assert(checkURIs('abc://username:password@example.com:123/path/data?key=value&key2=value2#fragid1',
   'abc://username:password@example.com:123/path/down/../data?key2=value2&key=value#fragid1'));
