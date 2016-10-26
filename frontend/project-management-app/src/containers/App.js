@@ -19,11 +19,11 @@ class App extends React.Component {
 const mapStateToProps = state => ({
   projectsToDo: state.projects.toDo,
   projectsInProgress: state.projects.inProgress,
-  projectsDone: state.projects.done
+  projectsDone: state.projects.done,
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(ProjectActions, dispatch)
+  actions: bindActionCreators(ProjectActions, dispatch),
 });
 
 export default connect(

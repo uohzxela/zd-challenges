@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import ProjectList from '../components/ProjectList';
 
 const projectsContainerStyle = {
-  display: 'flex'
+  display: 'flex',
 };
 
-class ProjectsContainer extends Component {
+class ProjectsContainer extends React.Component {
   render() {
     const { projectsToDo, projectsInProgress, projectsDone, actions } = this.props;
     return (
@@ -34,5 +34,12 @@ class ProjectsContainer extends Component {
     );
   }
 }
+
+ProjectsContainer.propTypes = {
+  projectsToDo: PropTypes.array.isRequired,
+  projectsInProgress: PropTypes.array.isRequired,
+  projectsDone: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired,
+};
 
 export default DragDropContext(HTML5Backend)(ProjectsContainer);

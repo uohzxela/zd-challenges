@@ -6,11 +6,11 @@ import App from './containers/App';
 import reducer from './reducers';
 import './index.css';
 
-const store = createStore(reducer)
+const store = createStore(reducer);
 
 render(
   <Provider store={store}>
     <App />
   </Provider>,
   document.getElementById('root')
-)
+);

@@ -1,17 +1,17 @@
 import React, { PropTypes } from 'react';
-import ItemTypes from '../constants/ItemTypes';
 import { DragSource, DropTarget } from 'react-dnd';
 import { findDOMNode } from 'react-dom';
 import { compose } from 'redux';
+import ItemTypes from '../constants/ItemTypes';
 
 const projectSource = {
   beginDrag(props) {
     return {
       id: props.id,
       index: props.index,
-      type: props.type
+      type: props.type,
     };
-  }
+  },
 };
 
 const projectTarget = {
@@ -56,9 +56,9 @@ const projectTarget = {
 
     // Time to actually perform the action
     props.sortProject({
-      dragIndex, 
-      hoverIndex, 
-      projectType: sourceType
+      dragIndex,
+      hoverIndex,
+      projectType: sourceType,
     });
 
     // Note: we're mutating the monitor item here!
@@ -66,54 +66,54 @@ const projectTarget = {
     // but it's good here for the sake of performance
     // to avoid expensive index searches.
     monitor.getItem().index = hoverIndex;
-  }
+  },
 };
 
 function dropTargetCollect(connect) {
   return {
-    connectDropTarget: connect.dropTarget()
+    connectDropTarget: connect.dropTarget(),
   };
 }
 
 function dragSourceCollect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
+    isDragging: monitor.isDragging(),
   };
 }
 
 const projectStyle = {
-  border: '1px dashed gray',
+  border: '1px solid lightgray',
   backgroundColor: 'white',
-  padding: '0.5rem 1rem',
+  padding: '1rem 1rem',
   color: 'black',
   cursor: 'move',
   wordBreak: 'break-all',
-  wordWrap: 'break-word'
+  wordWrap: 'break-word',
 };
 
 class Project extends React.Component {
-  static propTypes = {
-    connectDragSource: PropTypes.func.isRequired,
-    connectDropTarget: PropTypes.func.isRequired,
-    index: PropTypes.number.isRequired,
-    isDragging: PropTypes.bool.isRequired,
-    id: PropTypes.any.isRequired,
-    text: PropTypes.string.isRequired,
-    sortProject: PropTypes.func.isRequired,
-    type: PropTypes.string.isRequired
-  };
-
   render() {
     const { text, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-      <div style={{...projectStyle, opacity}}>
+      <div style={{ ...projectStyle, opacity }}>
         {text}
       </div>
     ));
   }
 }
+
+Project.propTypes = {
+  connectDragSource: PropTypes.func.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
+  sortProject: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  isDragging: PropTypes.bool.isRequired,
+  id: PropTypes.any.isRequired,
+  text: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+};
 
 export default compose(
   DropTarget(ItemTypes.PROJECT, projectTarget, dropTargetCollect),
