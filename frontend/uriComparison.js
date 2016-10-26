@@ -131,7 +131,8 @@ function parsePath(remaining) {
 }
 
 function parse(uri) {
-  let arr = parseScheme(uri);
+  // Parse scheme, auth, host and port starting from the left
+  let arr = parseScheme(unescape(uri));
   let remaining;
 
   const scheme = arr[0];
@@ -145,7 +146,7 @@ function parse(uri) {
   const host = arr[0];
   const port = arr[1];
   remaining = arr[2];
-
+  // Parse fragment, query and path starting from the right
   arr = parseFragment(remaining);
   const fragment = arr[0];
   remaining = arr[1];
@@ -155,7 +156,7 @@ function parse(uri) {
   remaining = arr[1];
 
   const path = parsePath(remaining);
-  return {
+  const data = {
     scheme: scheme.toLowerCase(),
     host: host.toLowerCase(),
     auth,
@@ -164,6 +165,9 @@ function parse(uri) {
     query,
     fragment,
   };
+  console.log(uri);
+  console.log(data);
+  return data;
 }
 
 function sortObjectByKey(unordered) {
@@ -184,8 +188,10 @@ function areObjectsEqual(query1, query2) {
 }
 
 function checkURIs(uri1, uri2) {
-  const uriData1 = parse(unescape(uri1));
-  const uriData2 = parse(unescape(uri2));
+  console.log(Array(50).join('-'));
+  const uriData1 = parse(uri1);
+  console.log();
+  const uriData2 = parse(uri2);
   if (uriData1.scheme !== uriData2.scheme) {
     return false;
   }
@@ -221,6 +227,8 @@ console.assert(checkURIs('http://abc.com/foo.html?a=1&b=2&a=3', 'http://abc.com/
 
 // test HEX encoding
 console.assert(checkURIs('http://abc.com:80/~smith/home.html', 'http://ABC.com/%7Esmith/home.html'));
+console.assert(checkURIs('http://www.abc.com/down/further/data?a=1&b=2#frag1', 
+  'http%3A%2F%2Fwww.abc.com%2Fdown%2Ffurther%2Fdata%3Fa%3D1%26b%3D2%23frag1'));
 
 // test empty fragment/query
 console.assert(checkURIs('http://uname:passwd@host.com/foo/bar.html', 'http://uname:passwd@host.com/foo/bar.html#'));
@@ -236,6 +244,6 @@ console.assert(checkURIs('http://uname:passwd@host.com?a=1#', 'http://uname:pass
 // test wrong auth
 console.assert(!checkURIs('http://uname:wrongpw@host.com', 'http://uname:passwd@host.com'));
 
-// test multiple features
+// test all features
 console.assert(checkURIs('abc://username:password@example.com:123/path/data?key=value&key2=value2#fragid1',
   'abc://username:password@example.com:123/path/down/../data?key2=value2&key=value#fragid1'));

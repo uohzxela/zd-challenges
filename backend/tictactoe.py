@@ -163,6 +163,7 @@ def is_winnable_diagonally(B, i, j):
             B[i-1][j-1] == marker and
             B[i+1][j+1] == marker):
         return True
+    return False
 
 
 def is_winnable_anti_diagonally(B, i, j):
