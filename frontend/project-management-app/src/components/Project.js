@@ -14,6 +14,8 @@ const projectSource = {
   },
 };
 
+// This function is written with reference to
+// https://github.com/gaearon/react-dnd/blob/master/examples/04%20Sortable/Simple/Card.js
 const projectTarget = {
   hover(props, monitor, component) {
     const dragIndex = monitor.getItem().index;
