@@ -10,9 +10,9 @@ export const sortProject = ({ dragIndex, hoverIndex, projectType }) => ({
   hoverIndex,
   projectType,
 });
-export const classifyProject = ({ src, dest, dragIndex }) => ({
+export const classifyProject = ({ sourceType, targetType, dragIndex }) => ({
   type: types.CLASSIFY_PROJECT,
-  src,
-  dest,
+  sourceType,
+  targetType,
   dragIndex,
 });

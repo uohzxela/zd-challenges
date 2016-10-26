@@ -38,6 +38,7 @@ export default function projects(state = initialState, action) {
           $set: state.idCounter + 1,
         },
       });
+    // Move project within project list
     case SORT_PROJECT:
       let dragProject = state[action.projectType][action.dragIndex];
       return update(state, {
@@ -48,15 +49,16 @@ export default function projects(state = initialState, action) {
           ],
         },
       });
+    // Move project between different project lists
     case CLASSIFY_PROJECT:
-      dragProject = state[action.src][action.dragIndex];
+      dragProject = state[action.sourceType][action.dragIndex];
       return update(state, {
-        [action.src]: {
+        [action.sourceType]: {
           $splice: [
             [action.dragIndex, 1],
           ],
         },
-        [action.dest]: {
+        [action.targetType]: {
           $unshift: [dragProject],
         },
       });

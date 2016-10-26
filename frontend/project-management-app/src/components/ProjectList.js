@@ -9,8 +9,8 @@ const projectListTarget = {
     const item = monitor.getItem();
     if (item.type !== props.type) {
       props.actions.classifyProject({
-        src: item.type,
-        dest: props.type,
+        sourceType: item.type,
+        targetType: props.type,
         dragIndex: item.index,
       });
     }
